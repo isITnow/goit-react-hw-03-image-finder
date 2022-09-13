@@ -13,3 +13,10 @@ export const fetchImages = async (searchQuery, page) => {
     console.error('Error:', error.message);
   }
 };
+
+// params: {
+//     key: '9050134-41fe2ca79f29d6928e7cd9c9b',
+//     image_type: 'photo',
+//     orientation: 'horizontal',
+//     per_page: PER_PAGE,
+//   }

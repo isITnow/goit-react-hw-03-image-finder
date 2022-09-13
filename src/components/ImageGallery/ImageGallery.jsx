@@ -3,13 +3,13 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { fetchImages } from 'services/fetchImages';
 import { Component } from 'react';
 import { toast } from 'react-toastify';
+import { Loader } from 'components/Loader';
 
 export class ImageGallery extends Component {
   state = {
-    // query: '',
     images: [],
     page: 1,
-    status: 'idle',
+    isLoading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -17,23 +17,28 @@ export class ImageGallery extends Component {
     const { page, images } = this.state;
 
     if (prevProps.query !== query || prevState.page !== page) {
+      this.setState({ isLoading: true });
+
+      if (prevProps.query !== query) {
+        this.setState({ page: 1 });
+      }
       const currentPage = prevProps.query !== query ? 1 : page;
 
-      fetchImages(query, currentPage).then(data => {
-        if (!data.hits.length) {
-          this.setState({ images: [], page: 1 });
-          toast.warn(`No results matching "${query}"`);
-          return;
-        }
+      fetchImages(query, currentPage)
+        .then(data => {
+          if (!data.hits.length) {
+            this.setState({ images: [], page: 1, isLoading: false });
+            toast.warn(`No results matching "${query}"`);
+            return;
+          }
 
-        if (prevProps.query === query) {
-          this.setState({ images: [...images, ...data.hits] });
-        }
-
-        if (prevProps.query !== query) {
-          this.setState({ images: data.hits });
-        }
-      });
+          this.setState({
+            images: currentPage === 1 ? data.hits : [...images, ...data.hits],
+            isLoading: false,
+          });
+        })
+        .catch(error => console.log(error.message))
+        .finally();
       console.log(this.state);
     }
   }
@@ -42,21 +47,9 @@ export class ImageGallery extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
-  // handleFetchImages = (query, page) => {
-  //   fetchImages(query, page).then(data => {
-  //     if (!data.hits.length) {
-  //       this.setState({ images: [] });
-  //       toast.warn(`No results matching "${query}"`);
-  //       return;
-  //     }
-
-  //     this.setState({ images: data.hits });
-  //   });
-  // };
-
   render() {
-    const { images } = this.state;
-    // const { query } = this.props;
+    const { images, isLoading } = this.state;
+    const { handleLoadMore } = this;
 
     return (
       <>
@@ -70,12 +63,9 @@ export class ImageGallery extends Component {
             />
           ))}
         </ul>
+        {isLoading && <Loader />}
         {images.length > 0 && (
-          <button
-            type="submit"
-            className={s.Button}
-            onClick={this.handleLoadMore}
-          >
+          <button type="submit" className={s.Button} onClick={handleLoadMore}>
             Load more
           </button>
         )}
@@ -83,10 +73,5 @@ export class ImageGallery extends Component {
     );
   }
 }
-
-// if (!images.length) {
-//   toast.warn(`no result matching ${query}`);
-//   return;
-// }
 
 // "idle" 'pending' 'resolved' 'rejected'

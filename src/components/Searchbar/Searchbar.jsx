@@ -17,14 +17,12 @@ export class Searchbar extends Component {
     evt.preventDefault();
     const { query } = this.state;
     if (!query.trim()) {
-      //   alert('Please, enter your request');
       toast.error('Please, enter your request');
       return;
     }
 
     this.props.onSubmit(query);
     this.setState({ query: '' });
-    console.log(this.state);
   };
 
   render() {
