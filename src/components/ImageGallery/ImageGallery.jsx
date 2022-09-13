@@ -9,32 +9,27 @@ import PropTypes from 'prop-types';
 export class ImageGallery extends Component {
   state = {
     images: [],
-    page: 1,
     isLoading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { query } = this.props;
-    const { page, images } = this.state;
-
-    if (prevProps.query !== query || prevState.page !== page) {
+    const { query, page } = this.props;
+    const { images } = this.state;
+    const isNewQuery = prevProps.query !== query;
+    const isNewPage = prevProps.page !== page;
+    if (isNewQuery || isNewPage) {
       this.setState({ isLoading: true });
 
-      if (prevProps.query !== query) {
-        this.setState({ page: 1 });
-      }
-      const currentPage = prevProps.query !== query ? 1 : page;
-
-      fetchImages(query, currentPage)
+      fetchImages(query, page)
         .then(data => {
           if (!data.hits.length) {
-            this.setState({ images: [], page: 1, isLoading: false });
+            this.setState({ images: [], isLoading: false });
             toast.warn(`No results matching "${query}"`);
             return;
           }
 
           this.setState({
-            images: currentPage === 1 ? data.hits : [...images, ...data.hits],
+            images: page === 1 ? data.hits : [...images, ...data.hits],
             isLoading: false,
           });
         })
@@ -42,13 +37,9 @@ export class ImageGallery extends Component {
     }
   }
 
-  handleLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-  };
-
   render() {
     const { images, isLoading } = this.state;
-    const { handleLoadMore } = this;
+    const { onLoadMore } = this.props;
 
     return (
       <>
@@ -64,7 +55,7 @@ export class ImageGallery extends Component {
         </ul>
         {isLoading && <Loader />}
         {images.length > 0 && (
-          <button type="submit" className={s.Button} onClick={handleLoadMore}>
+          <button type="submit" className={s.Button} onClick={onLoadMore}>
             Load more
           </button>
         )}
@@ -75,6 +66,5 @@ export class ImageGallery extends Component {
 
 ImageGallery.propTypes = {
   query: PropTypes.string.isRequired,
+  page: PropTypes.number.isRequired,
 };
-
-// "idle" 'pending' 'resolved' 'rejected'
