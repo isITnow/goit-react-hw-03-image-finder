@@ -1,9 +1,10 @@
-import s from './ImageGallery.module.css';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { fetchImages } from 'services/fetchImages';
 import { Component } from 'react';
 import { toast } from 'react-toastify';
 import { Loader } from 'components/Loader';
+import s from './ImageGallery.module.css';
+import PropTypes from 'prop-types';
 
 export class ImageGallery extends Component {
   state = {
@@ -37,9 +38,7 @@ export class ImageGallery extends Component {
             isLoading: false,
           });
         })
-        .catch(error => console.log(error.message))
-        .finally();
-      console.log(this.state);
+        .catch(error => console.log(error.message));
     }
   }
 
@@ -73,5 +72,9 @@ export class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  query: PropTypes.string.isRequired,
+};
 
 // "idle" 'pending' 'resolved' 'rejected'
