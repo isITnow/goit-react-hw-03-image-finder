@@ -3,6 +3,7 @@ import { fetchImages } from 'services/fetchImages';
 import { Component } from 'react';
 import { toast } from 'react-toastify';
 import { Loader } from 'components/Loader';
+import { Button } from 'components/Button';
 import s from './ImageGallery.module.css';
 import PropTypes from 'prop-types';
 
@@ -55,9 +56,7 @@ export class ImageGallery extends Component {
         </ul>
         {isLoading && <Loader />}
         {images.length > 0 && (
-          <button type="submit" className={s.Button} onClick={onLoadMore}>
-            Load more
-          </button>
+          <Button children={'Load more'} onClick={onLoadMore} />
         )}
       </>
     );
@@ -67,4 +66,5 @@ export class ImageGallery extends Component {
 ImageGallery.propTypes = {
   query: PropTypes.string.isRequired,
   page: PropTypes.number.isRequired,
+  onLoadMore: PropTypes.func.isRequired,
 };
