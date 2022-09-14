@@ -1,6 +1,6 @@
-import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
-import { fetchImages } from 'services/fetchImages';
 import { Component } from 'react';
+import { fetchImages } from 'services/fetchImages';
+import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { toast } from 'react-toastify';
 import { Loader } from 'components/Loader';
 import { Button } from 'components/Button';
@@ -8,6 +8,12 @@ import s from './ImageGallery.module.css';
 import PropTypes from 'prop-types';
 
 export class ImageGallery extends Component {
+  static propTypes = {
+    query: PropTypes.string.isRequired,
+    page: PropTypes.number.isRequired,
+    onLoadMore: PropTypes.func.isRequired,
+  };
+
   state = {
     images: [],
     isLoading: false,
@@ -62,9 +68,3 @@ export class ImageGallery extends Component {
     );
   }
 }
-
-ImageGallery.propTypes = {
-  query: PropTypes.string.isRequired,
-  page: PropTypes.number.isRequired,
-  onLoadMore: PropTypes.func.isRequired,
-};

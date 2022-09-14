@@ -4,6 +4,12 @@ import { Modal } from '../Modal';
 import s from './ImageGalleryItem.module.css';
 
 export class ImageGalleryItem extends Component {
+  static propTypes = {
+    imgUrl: PropTypes.string.isRequired,
+    largeImgUrl: PropTypes.string.isRequired,
+    tags: PropTypes.string.isRequired,
+  };
+
   state = {
     isModalOpen: false,
   };
@@ -26,11 +32,7 @@ export class ImageGalleryItem extends Component {
           alt={tags.split(',')}
         />
         {isModalOpen && (
-          <Modal
-            largeImgUrl={largeImgUrl}
-            tags={tags}
-            onCloseModal={handleToggleModal}
-          >
+          <Modal onCloseModal={handleToggleModal}>
             <img src={largeImgUrl} alt={tags.split(',')} />
           </Modal>
         )}
@@ -38,9 +40,3 @@ export class ImageGalleryItem extends Component {
     );
   }
 }
-
-ImageGalleryItem.propTypes = {
-  imgUrl: PropTypes.string.isRequired,
-  largeImgUrl: PropTypes.string.isRequired,
-  tags: PropTypes.string.isRequired,
-};
